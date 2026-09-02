@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>PROFE CACHAGA · ECO-105</title>
+<style>
+html,body{margin:0;background:#08101d;color:#f6f9ff;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}main{min-height:70vh;display:grid;place-items:center;padding:32px}.box{max-width:560px;text-align:center}.mark{width:58px;height:58px;margin:auto;border-radius:18px;display:grid;place-items:center;background:#65e4bc;color:#061710;font-weight:900;font-size:20px}.bar{height:8px;margin:24px auto 10px;border-radius:999px;background:#1a2941;overflow:hidden}.bar span{display:block;height:100%;width:20%;background:#65e4bc;animation:load 1.2s ease-in-out infinite alternate}@keyframes load{to{width:95%}}small{color:#aab7cc}.err{color:#ff9cab}
+</style>
+</head>
+<body><main><div class="box"><div class="mark">PC</div><h1>PROFE CACHAGA</h1><p>Cargando la plataforma de Economía General…</p><div class="bar"><span></span></div><small id="status">Preparando ejercicios y laboratorios.</small></div></main>
+<script>
+(async()=>{
+  const status=document.getElementById('status');
+  try{
+    if(typeof DecompressionStream==='undefined') throw new Error('Tu navegador necesita una versión más reciente de Chrome, Edge, Firefox o Safari.');
+    const files=Array.from({length:12},(_,i)=>`payload-${String(i+1).padStart(2,'0')}.txt`);
+    const parts=[];
+    for(let i=0;i<files.length;i++){
+      status.textContent=`Cargando módulo ${i+1} de ${files.length}…`;
+      const r=await fetch(files[i],{cache:'no-store'});
+      if(!r.ok) throw new Error('No se pudo cargar '+files[i]);
+      parts.push((await r.text()).trim());
+    }
+    const b64=parts.join('');
+    const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    const html=await new Response(stream).text();
+    document.open();document.write(html);document.close();
+  }catch(e){status.className='err';status.textContent='No se pudo iniciar PROFE CACHAGA: '+e.message;}
+})();
+</script></body></html>
